@@ -114,54 +114,6 @@
     </style>
 </head>
 <body class="relative">
-    <!-- Login Modal (shown by default) -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-900 rounded-xl max-w-md w-full p-8 border border-gray-800 relative overflow-hidden">
-            <div class="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-blue-500 opacity-10 blur-3xl"></div>
-            <div class="absolute -bottom-20 -left-20 w-40 h-40 rounded-full bg-green-500 opacity-10 blur-3xl"></div>
-            
-            <div class="flex justify-center mb-6">
-                <div class="text-3xl font-bold">
-                    <span class="neon-text-green">K</span>
-                    <span class="neon-text-blue">A</span>
-                    <span class="neon-text-green">N</span>
-                    <span class="neon-text-blue">E</span>
-                </div>
-            </div>
-            
-            <h2 class="text-2xl font-semibold text-center mb-2">Welcome to KANE</h2>
-            <p class="text-gray-400 text-center mb-6">Your personal automation assistant for AiVoiceHub templates</p>
-            
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                    <input type="email" id="email" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="your@email.com">
-                </div>
-                
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
-                    <input type="password" id="password" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="••••••••">
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember-me" type="checkbox" class="h-4 w-4 text-green-500 focus:ring-green-500 border-gray-600 rounded bg-gray-700">
-                        <label for="remember-me" class="ml-2 block text-sm text-gray-300">Remember me</label>
-                    </div>
-                    
-                    <a href="#" class="text-sm text-blue-400 hover:text-blue-300">Forgot password?</a>
-                </div>
-                
-                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white font-medium py-3 px-4 rounded-lg hover:opacity-90 transition-opacity glow-effect">
-                    Sign In
-                </button>
-            </form>
-            
-            <p class="text-gray-500 text-sm text-center mt-6">
-                By signing in, you agree to our <a href="#" class="text-blue-400 hover:underline">Terms</a> and <a href="#" class="text-blue-400 hover:underline">Privacy Policy</a>.
-            </p>
-        </div>
-    </div>
 
     <!-- Trial Ended Modal (hidden by default) -->
     <div id="trialEndedModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 hidden">
