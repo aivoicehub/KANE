@@ -536,5 +536,41 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
     </script>
-<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=Wajeeh12/kane" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+ <!-- 🔥 Firebase Auth Integration 🔥 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0Ro3splnB5CNO72zB57HVYY3MJxBSHzk",
+      authDomain: "kane-9bb34.firebaseapp.com",
+      projectId: "kane-9bb34",
+      storageBucket: "kane-9bb34.appspot.com",
+      messagingSenderId: "740858924515",
+      appId: "1:740858924515:web:d707c00fc574fc13dde4d6",
+      measurementId: "G-4EH3C8J7QB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          console.log("✅ Login successful:", userCredential.user);
+          // Optionally redirect or trigger a UI update here
+        })
+        .catch((error) => {
+          alert("❌ Login failed: " + error.message);
+        });
+    });
+  </script>
+
+  <p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px; position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">
+    Made with ❤️
+  </p>
 </html>
