@@ -320,46 +320,97 @@
         });
         
         // Handle chat form submission
-        document.getElementById('chatForm').addEventListener('submit', async function (e) {   
-            e.preventDefault();   
-            const input = document.getElementById('messageInput');   
-            const message = input.value.trim();   
-            if (!message) return;    
+        document.getElementById('chatForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
 
-            // Show user message   
-            addMessageToChat(message, 'user');   
-            input.value = '';    
+            // Show user message immediately
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'chat-message-user rounded-lg p-4 max-w-3xl ml-auto mb-4';
+            userMessageDiv.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 bg-blue-500 bg-opacity-20 p-2 rounded-lg mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-white">${message}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('chatContainer').appendChild(userMessageDiv);
+            input.value = '';
+            
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'chat-message-ai rounded-lg p-4 max-w-3xl mx-auto mb-4';
+            typingDiv.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 bg-green-500 bg-opacity-20 p-2 rounded-lg mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                    </div>
+                    <div class="typing-indicator flex space-x-1 items-center">
+                        <span class="text-white">KANE is typing</span>
+                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>
+                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>
+                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('chatContainer').appendChild(typingDiv);
+            document.getElementById('chatContainer').scrollTop = chatContainer.scrollHeight;
 
-            // Show typing indicator   
-            const typing = document.createElement('div');   
-            typing.id = 'typingIndicator';   
-            typing.className = 'chat-message-ai rounded-lg p-4 max-w-3xl mx-auto';   
-            typing.innerHTML = `     
-                <div class="flex items-start">       
-                    <div class="flex-shrink-0 bg-green-500 bg-opacity-20 p-2 rounded-lg mr-3">         
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">           
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />         
-                        </svg>       
-                    </div>       
-                    <div class="typing-indicator flex space-x-1 items-center">         
-                        <span class="text-white">KANE is typing</span>         
-                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>         
-                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>         
-                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>       
-                    </div>     
-                </div>   
-            `;   
-            document.getElementById('chatContainer').appendChild(typing);   
-            document.getElementById('chatContainer').scrollTop = chatContainer.scrollHeight;    
-
-            // Get response from backend   
-            const reply = await talkToKane(message);    
-
-            // Remove typing   
-            typing.remove();    
-
-            // Show AI reply   
-            addMessageToChat(reply, 'ai'); 
+            try {
+                // Get response from backend
+                const reply = await talkToKane(message);
+                
+                // Remove typing indicator
+                typingDiv.remove();
+                
+                // Show AI reply
+                const aiMessageDiv = document.createElement('div');
+                aiMessageDiv.className = 'chat-message-ai rounded-lg p-4 max-w-3xl mx-auto';
+                aiMessageDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-green-500 bg-opacity-20 p-2 rounded-lg mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-white">${reply}</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('chatContainer').appendChild(aiMessageDiv);
+                document.getElementById('chatContainer').scrollTop = chatContainer.scrollHeight;
+            } catch (error) {
+                console.error('Error getting response from KANE:', error);
+                typingDiv.remove();
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'chat-message-ai rounded-lg p-4 max-w-3xl mx-auto';
+                errorDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-red-500 bg-opacity-20 p-2 rounded-lg mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-white">Sorry, I encountered an error. Please try again.</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('chatContainer').appendChild(errorDiv);
+                document.getElementById('chatContainer').scrollTop = chatContainer.scrollHeight;
+            }
         });
         
         // Add message to chat container
