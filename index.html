@@ -114,7 +114,6 @@
     </style>
 </head>
 <body class="relative">
-
     <!-- Trial Ended Modal (hidden by default) -->
     <div id="trialEndedModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-gray-900 rounded-xl max-w-md w-full p-8 border border-gray-800 relative overflow-hidden">
@@ -144,8 +143,8 @@
         </div>
     </div>
 
-    <!-- Main App Interface (hidden until login) -->
-    <div id="appInterface" class="h-full flex flex-col hidden">
+    <!-- Main App Interface -->
+    <div id="appInterface" class="h-full flex flex-col">
         <!-- Header with trial countdown -->
         <header class="bg-gray-900 border-b border-gray-800 py-3 px-6 flex items-center justify-between">
             <div class="flex items-center space-x-2">
@@ -268,9 +267,7 @@
             <div class="flex-1 flex flex-col overflow-hidden">
                 <!-- Chat messages container -->
                 <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                   
-                    
-        
+                </div>
                 
                 <!-- Chat input -->
                 <div class="border-t border-gray-800 p-4 bg-gray-900">
@@ -291,40 +288,31 @@
     </div>
 
     <script>
-        // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Start trial countdown (14 days from now)
+        const trialEndDate = new Date();
+        trialEndDate.setDate(trialEndDate.getDate() + 14);
+        
+        // Update countdown daily
+        updateTrialCountdown();
+        setInterval(updateTrialCountdown, 86400000); // Update every 24 hours
+        
+        function updateTrialCountdown() {
+            const now = new Date();
+            const diffTime = trialEndDate - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             
-            // Simulate login process
-            document.getElementById('loginModal').classList.add('hidden');
-            document.getElementById('appInterface').classList.remove('hidden');
-            
-            // Start trial countdown (14 days from now)
-            const trialEndDate = new Date();
-            trialEndDate.setDate(trialEndDate.getDate() + 14);
-            
-            // Update countdown daily
-            updateTrialCountdown();
-            setInterval(updateTrialCountdown, 86400000); // Update every 24 hours
-            
-            function updateTrialCountdown() {
-                const now = new Date();
-                const diffTime = trialEndDate - now;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (diffDays <= 0) {
-                    document.getElementById('trialCountdown').innerHTML = '<span class="text-red-400">Trial expired</span>';
-                    document.getElementById('trialEndedModal').classList.remove('hidden');
-                } else {
-                    document.getElementById('trialCountdown').innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>${diffDays} days left in trial</span>
-                    `;
-                }
+            if (diffDays <= 0) {
+                document.getElementById('trialCountdown').innerHTML = '<span class="text-red-400">Trial expired</span>';
+                document.getElementById('trialEndedModal').classList.remove('hidden');
+            } else {
+                document.getElementById('trialCountdown').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>${diffDays} days left in trial</span>
+                `;
             }
-        });
+        }
         
         // Close trial ended modal
         document.getElementById('closeTrialModal').addEventListener('click', function() {
@@ -332,19 +320,47 @@
         });
         
         // Handle chat form submission
-        document.getElementById('chatForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
-            
-            if (message) {
-                // Add user message to chat
-                addMessageToChat(message, 'user');
-                input.value = '';
-                
-                // Simulate AI typing
-                setTimeout(() => {
+        document.getElementById('chatForm').addEventListener('submit', async function (e) {   
+            e.preventDefault();   
+            const input = document.getElementById('messageInput');   
+            const message = input.value.trim();   
+            if (!message) return;    
 
+            // Show user message   
+            addMessageToChat(message, 'user');   
+            input.value = '';    
+
+            // Show typing indicator   
+            const typing = document.createElement('div');   
+            typing.id = 'typingIndicator';   
+            typing.className = 'chat-message-ai rounded-lg p-4 max-w-3xl mx-auto';   
+            typing.innerHTML = `     
+                <div class="flex items-start">       
+                    <div class="flex-shrink-0 bg-green-500 bg-opacity-20 p-2 rounded-lg mr-3">         
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">           
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />         
+                        </svg>       
+                    </div>       
+                    <div class="typing-indicator flex space-x-1 items-center">         
+                        <span class="text-white">KANE is typing</span>         
+                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>         
+                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>         
+                        <span class="h-2 w-2 bg-green-400 rounded-full"></span>       
+                    </div>     
+                </div>   
+            `;   
+            document.getElementById('chatContainer').appendChild(typing);   
+            document.getElementById('chatContainer').scrollTop = chatContainer.scrollHeight;    
+
+            // Get response from backend   
+            const reply = await talkToKane(message);    
+
+            // Remove typing   
+            typing.remove();    
+
+            // Show AI reply   
+            addMessageToChat(reply, 'ai'); 
+        });
         
         // Add message to chat container
         function addMessageToChat(message, sender) {
@@ -393,18 +409,36 @@
                     typingIndicator.remove();
                     
                     messageDiv.className = 'chat-message-ai rounded-lg p-4 max-w-3xl mx-auto';
-                    messageDiv.innerHTML = `
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-green-500 bg-opacity-20 p-2 rounded-lg mr-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                </svg>
+                    if (message) {
+                        messageDiv.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 bg-green-500 bg-opacity-20 p-2 rounded-lg mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-white">${message}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-white">${message}</p>
+                        `;
+                    } else {
+                        messageDiv.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 bg-green-500 bg-opacity-20 p-2 rounded-lg mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                </div>
+                                <div class="typing-indicator flex space-x-1 items-center">
+                                    <span class="text-white">KANE is typing</span>
+                                    <span class="h-2 w-2 bg-green-400 rounded-full"></span>
+                                    <span class="h-2 w-2 bg-green-400 rounded-full"></span>
+                                    <span class="h-2 w-2 bg-green-400 rounded-full"></span>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    }
                     
                     chatContainer.appendChild(messageDiv);
                     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -421,80 +455,18 @@
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         });
+        
+    async function talkToKane(message) {
+  const response = await fetch("https://wajeeh.app.n8n.cloud/webhook/kane", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await response.json();
+  return data.reply || "Sorry, I didn't understand that.";
     </script>
- <!-- 🔥 Firebase Auth Integration 🔥 -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA0Ro3splnB5CNO72zB57HVYY3MJxBSHzk",
-      authDomain: "kane-9bb34.firebaseapp.com",
-      projectId: "kane-9bb34",
-      storageBucket: "kane-9bb34.appspot.com",
-      messagingSenderId: "740858924515",
-      appId: "1:740858924515:web:d707c00fc574fc13dde4d6",
-      measurementId: "G-4EH3C8J7QB"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      console.log("✅ Login successful:", userCredential.user);
-      document.getElementById('loginModal').style.display = 'none'; // Hide login modal
-    })
-    .catch((error) => {
-      alert("❌ Login failed: " + error.message);
-      // Prevent access if login fails
-      return;
-    });
-});
-  </script>
-
-  <p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px; position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">
-    Made with ❤️
-  </p>
-    <!-- 👇👇👇 Paste this before </body> -->
-<div id="chat-box" class="bg-gray-800 p-4 rounded-lg mb-4 h-64 overflow-y-auto text-white text-sm">
-  <!-- Messages will appear here -->
-</div>
-
-<div class="flex gap-2">
-  <input id="userInput" type="text" placeholder="Ask KANE anything..." 
-    class="flex-grow px-3 py-2 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none" />
-  <button onclick="sendMessage()"
-    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Send</button>
-</div>
-
-<script>
-  async function sendMessage() {
-    const input = document.getElementById("userInput");
-    const message = input.value.trim();
-    if (!message) return;
-
-    const chatBox = document.getElementById("chat-box");
-    chatBox.innerHTML += `<div class="mb-2"><strong>You:</strong> ${message}</div>`;
-    input.value = "";
-
-    const res = await fetch("https://wajeeh.app.n8n.cloud/webhook/kane", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message })
-    });
-
-    const data = await res.json();
-    const reply = data.reply || "KANE is thinking too hard... please try again.";
-    chatBox.innerHTML += `<div class="mb-2 text-green-400"><strong>KANE:</strong> ${reply}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-</script>
-<!-- 👆👆👆 End of new code -->
-
+</body>
 </html>
