@@ -328,9 +328,7 @@
             </div>
         </div>
     </div>
-
-    <script>
-        // ============= CONFIGURATION =============
+    // ============= CONFIGURATION =============
         // Replace this with your actual n8n webhook URL
         const N8N_WEBHOOK_URL = 'https://wajeeh.app.n8n.cloud/webhook-test/kane';
         
@@ -502,3 +500,20 @@
                         <div class="flex-shrink-0 bg-red-500 bg-opacity-20 p-2 rounded-lg mr-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21
+                    // Send message to n8n and return the AI response
+async function sendToN8n(message) {
+  const response = await fetch("https://wajeeh.app.n8n.cloud/webhook/kane", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await response.json();
+  return data.reply || "Sorry, I didn't understand that.";
+}
+
+
+    <script>
+    
