@@ -330,7 +330,7 @@
     </div>
     // ============= CONFIGURATION =============
         // Replace this with your actual n8n webhook URL
-        const N8N_WEBHOOK_URL = 'https://wajeeh.app.n8n.cloud/webhook-test/kane';
+        const N8N_WEBHOOK_URL = 'https://wajeeh.app.n8n.cloud/webhook/kane';
         
         // ============= N8N INTEGRATION =============
         let isConnected = true;
@@ -435,12 +435,13 @@
         // Handle chat form submission
         document.getElementById('chatForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            if (isProcessing) return;
+            console.log('✅ Form submitted');
             
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             const sendButton = document.getElementById('sendButton');
+
+            const sendButton = document.getElementById('sendButton');   
             
             if (message) {
                 isProcessing = true;
@@ -473,7 +474,12 @@
                 sendButton.style.opacity = '1';
             }
         });
-        
+        function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
         // Add message to chat container
         function addMessageToChat(message, sender) {
             const chatContainer = document.getElementById('chatContainer');
